@@ -13,9 +13,11 @@ TagManager:
   - Hammers
   - UnfinishedRaft
   - OpenCrates
-  - Ropes
   - Floor
   - Logs
+  - Item
+  - Craftable
+  - Ropes
   layers:
   - Default
   - TransparentFX

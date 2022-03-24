@@ -714,10 +714,18 @@ MonoBehaviour:
   actionItem: {fileID: 0}
   inHandItemScript: {fileID: 0}
   actionItemScript: {fileID: 0}
+  throwIsland: {fileID: 0}
+  cameraRig: {fileID: 0}
   animator: {fileID: 0}
   throwDirection: {x: 0, y: 0, z: 0}
   isSelected: 0
   craftingLoop: 0
+  throwForce: 10
+  debug: 
+  remaining: 0
+  stopping: 0
+  startedWalking: 0
+  hand: {fileID: 4618405033059758}
 --- !u!1 &1265796727818552
 GameObject:
   m_ObjectHideFlags: 0

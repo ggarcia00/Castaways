@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 5103253c3d959574095d4e95e55fac09
 ModelImporter:
-  serializedVersion: 20101
+  serializedVersion: 20200
   internalIDToNameTable:
   - first:
       74: -203655887218126122
@@ -60,7 +60,7 @@ ModelImporter:
       curves: []
       events:
       - time: 0.49568966
-        functionName: craftItem
+        functionName: CraftItem
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -938,6 +938,7 @@ ModelImporter:
   animationType: 3
   humanoidOversampling: 1
   avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
   additionalBone: 0
   userData: 
   assetBundleName: 

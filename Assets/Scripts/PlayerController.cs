@@ -9,8 +9,9 @@ public class PlayerController : MonoBehaviour
     // Control Variables
     public GameObject inHandItem;
     public GameObject actionItem;
-    public ItemScript inHandItemScript;
-    public ItemScript actionItemScript;
+    public Item inHandItemScript;
+    public Item actionItemScript;
+    public Craftable actionCraftable;
     public GameObject throwIsland;
     public GameObject cameraRig;
     public Animator animator;
@@ -27,6 +28,8 @@ public class PlayerController : MonoBehaviour
     // Ambient Variables
     NavMeshAgent agent;
     bool selectable = false;
+
+    public Transform hand;
     
     // Public Class functions
 
@@ -36,29 +39,29 @@ public class PlayerController : MonoBehaviour
     }
 
     // Function that the animation (grabbing item) calls on its event
-    public void callItem() {
+  /*  public void callItem() {
         actionItemScript.pickupItem = true;
         animator.SetBool("pickupItem", false);
-    }
+    }*/
 
     // Function that the animation (pickup box) calls on its event
-    public void callBox() {
+ /*   public void callBox() {
         animator.SetBool("carryingBox", true);
         actionItemScript.pickupBox = true;
         animator.SetBool("pickupBox", false);
-    }
+    }*/
 
     // Function that the animation (throwing) calls on its event
-    public void throwingBox() {
+    /*public void throwingBox() {
         inHandItemScript.throwBox = true;
         inHandItemScript.formerParent = inHandItem.transform.parent;
         inHandItemScript.parent = throwIsland.transform;
         animator.SetBool("throwBox", false);
         animator.SetBool("carryingBox", false);
-    }
+    }*/
 
     // Function that the animation (put item down) calls on its event
-    public void dropItem() {
+   /* public void dropItem() {
         if (actionItem) {
             if (actionItem.tag == "OpenCrates") {
                 inHandItemScript.dropItemBox = true;
@@ -71,10 +74,10 @@ public class PlayerController : MonoBehaviour
         }
         animator.SetBool("dropItem", false);
         animator.SetBool("carryingBox", false);
-    }
+    }*/
 
     // Function that the animations (knife cut, wood cut, craft raft) calls on its events
-    public void craftItem() {
+    /*public void craftItem() {
         craftingLoop++;
         if (craftingLoop>=3)
         {
@@ -84,10 +87,10 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("craftRaft", false);
             animator.SetBool("craftWood", false);
         }
-    }
+    }*/
 
     // Function that the animation (BoxAction) calls on its events
-    public void boxAction() {
+   /* public void boxAction() {
         if (actionItem.tag == "OpenCrates") {
             actionItemScript.closeCrate = true;
             animator.SetBool("boxAction", false);
@@ -96,7 +99,7 @@ public class PlayerController : MonoBehaviour
             actionItemScript.openCrate = true;
             animator.SetBool("boxAction", false);
         }
-    }
+    }*/
 
     // Private Class functions
 
@@ -124,41 +127,72 @@ public class PlayerController : MonoBehaviour
             } else if (actionItem.tag == "Boxes") {
                 animator.SetBool("pickupBox", true);
             } else if (actionItem.tag == "Axes" || actionItem.tag == "Hammers" || actionItem.tag == "Knives" || actionItem.tag == "Ropes") {
-                animator.SetBool("pickupItem", true);
+                /*animator.SetTrigger("pickupItem");*/
             }
         }
         // Check middle button clicks
-        else if (click == 2) {
-            // Open crate interactions
-            if (actionItem.tag == "OpenCrates") {
-                // Put item inside open crate
-                if (inHandItem) {
-                    animator.SetBool("dropItem", true);
-                }
-                // Close the open crate
-                else {
-                    if (actionItemScript.items[0]) {
-                        animator.SetBool("boxAction", true);
-                    }
-                    else {
-                        actionItem = null;
-                        actionItemScript = null;
-                    }
-                }
+        /*else if (click == 2) {*/
+        // Open crate interactions
+        /*if (actionItem.tag == "OpenCrates") {
+            // Put item inside open crate
+            if (inHandItem) {
+                animator.SetBool("dropItem", true);
             }
-            // Closed Crate interactions
-            else if (actionItem.tag == "Boxes") {
-                // Throw the closed crate
-                if (inHandItem == actionItem) {
-                    animator.SetBool("throwBox", true);
-                } 
-                // Open the closed crate
-                else {
+            // Close the open crate
+            else {
+                if (actionItemScript.items[0]) {
                     animator.SetBool("boxAction", true);
                 }
+                else {
+                    actionItem = null;
+                    actionItemScript = null;
+                }
             }
-        }
+        }*/
+        // Closed Crate interactions
+        /*else if (actionItem.tag == "Boxes")
+        {
+            // Throw the closed crate
+            if (inHandItem == actionItem)
+            {
+                animator.SetBool("throwBox", true);
+            }
+            // Open the closed crate
+            else
+            {
+                animator.SetBool("boxAction", true);
+            }
+        }*/
     }
+    
+    void GetItem()
+    {
+        actionItemScript.PickupItem(hand);
+        inHandItem = actionItem;
+        inHandItemScript = actionItemScript;
+        actionItem = null;
+        actionItemScript = null;
+        animator.SetBool("pickupItem", false);
+        agent.ResetPath();
+    }
+
+
+    void DropItem()
+    {
+        agent.ResetPath();
+        inHandItemScript.DropItem(hand);
+        inHandItem = null;
+        inHandItemScript = null;
+        animator.SetBool("dropItem", false);
+    }
+    void CraftItem()
+    {
+        actionCraftable.Craft(inHandItemScript.itemType);
+        actionCraftable = null;
+        animator.SetBool("craftRope", false);
+
+    }
+
 
     // Start is called before the first frame update
     void Start() {
@@ -169,15 +203,20 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update() {
         // Left Button clicks
-            // Character selection
-        if (Input.GetMouseButtonDown(0)) {
-            if (selectable) {
+        // Character selection
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (selectable)
+            {
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit)) {
+                if (Physics.Raycast(ray, out hit))
+                {
                     // Character selection
-                    if (hit.transform.gameObject == this.gameObject) {
-                        if (!isSelected) {
+                    if (hit.transform.gameObject == this.gameObject)
+                    {
+                        if (!isSelected)
+                        {
                             isSelected = true;
                             animator.SetBool("isSelected", isSelected);
                             CameraController.instance.followTransform = transform;
@@ -187,95 +226,80 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        // Right Button clicks
+
+
+        else if (isSelected)
+        {
+            // Right Button clicks
             // Character movement
             // Crafting and picking up objects
-        else if (Input.GetMouseButtonDown(1)) {
-            if (isSelected) {
+            if (Input.GetMouseButtonDown(1))
+            {
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit)) {
+                if (Physics.Raycast(ray, out hit))
+                {
                     // Character movement
-                    if (hit.transform.tag == "Floor" || hit.transform.tag == "Untagged" || hit.transform.tag == "Players" || hit.transform.tag == "OpenCrates") {
+                    if (hit.transform.tag == "Floor" || hit.transform.tag == "Untagged" || hit.transform.tag == "Players" || hit.transform.tag == "OpenCrates")
+                    {
+                        actionItem = null;
+                        actionItemScript = null;
                         moveToPoint(hit.point);
                     }
-                    // Crafting and picking up objects
-                    else {
-                        if (hit.transform.tag == "Logs") {
-                            actionItem = hit.transform.parent.gameObject;
-                            actionItemScript = actionItem.GetComponent<ItemScript>();
-                            actionItemScript.player = this;
-                        } else {
+                    // Item interaction
+                    else
+                    {
+                        if( hit.transform.tag == "Item")
+                        {
                             actionItem = hit.transform.gameObject;
-                            actionItemScript = actionItem.GetComponent<ItemScript>();
-                            actionItemScript.player = this;
+                            actionItemScript = actionItem.GetComponent<Item>();
+
+                        }else if (hit.transform.tag == "Craftable")
+                        {
+                            actionItem = null;
+                            actionItemScript = null;
+                            actionCraftable = hit.transform.gameObject.GetComponent<Craftable>();
                         }
+
                         moveToPoint(hit.point);
-                        //this.gameObject.transform.LookAt(actionItem.transform);
-                        //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(actionItem.transform.position), 10 * Time.deltaTime);
-                        performAction(1);
                     }
                 }
             }
-        }
-        // Middle button clicks
-            // Close open crate
-            // Open closed crate
-            // Put itens in open crate
-            // Throw closed box
-        else if (Input.GetMouseButtonDown(2)) {
-            if (isSelected) {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit)) {
-                    if (inHandItem) {
-                        if (inHandItem.tag == "Boxes") {
-                            actionItem = inHandItem;
-                            actionItemScript = actionItem.GetComponent<ItemScript>();
-                            actionItemScript.player = this;
-                            Vector3 hitPoint = hit.point;
-                            throwIsland = hit.transform.parent.gameObject;
-                            actionItemScript.throwIsland = throwIsland;
-                            //actionItemScript.destiny = null;
-                            Vector3 mouseDir = hitPoint - this.transform.position;
-                            mouseDir = mouseDir.normalized;
-                            throwDirection = mouseDir;
-                            moveToPoint(hit.point);
-                            //this.gameObject.transform.LookAt(actionItem.transform);
-                            //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(actionItem.transform.position), 10 * Time.deltaTime);
-                            performAction(2);
-                        } else {
-                            actionItem = hit.transform.gameObject;
-                            actionItemScript = actionItem.GetComponent<ItemScript>();
-                            actionItemScript.player = this;
-                            moveToPoint(hit.point);
-                            //this.gameObject.transform.LookAt(actionItem.transform, );
-                            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(actionItem.transform.position), 10 * Time.deltaTime);
-                            performAction(2);
-                        }   
-                    } else {
-                        actionItem = hit.transform.gameObject;
-                        actionItemScript = actionItem.GetComponent<ItemScript>();
-                        actionItemScript.player = this;
-                        moveToPoint(hit.point);
-                        //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(actionItem.transform.position), 10 * Time.deltaTime);
-                        performAction(2);
-                    }
-                }  
+            else if (Input.GetKeyDown(KeyCode.G))
+            {
+                if (inHandItem && !animator.GetBool("dropItem"))
+                {
+                    animator.SetBool("dropItem", true);
+                }
             }
-        }
-        else if (Input.GetKeyDown(KeyCode.G)) {
-            if (isSelected) {
-                animator.SetBool("dropItem", true);
+            else if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                isSelected = false;
+                animator.SetBool("isSelected", isSelected);
+                Vector3 camPos = cameraRig.transform.position;
+                Vector3 newPos = new Vector3(camPos.x, camPos.y + 10, camPos.z - 10);
+                cameraRig.GetComponent<CameraController>().newPosition = newPos;
             }
+
+
+
+            if (actionItem)
+            {
+                if (!inHandItem)
+                {
+                    if (!animator.GetBool("pickupItem") && (transform.position - actionItem.transform.position).magnitude <= 1f)
+                        animator.SetBool("pickupItem", true);
+                }
+            }else if (actionCraftable)
+            {
+                if(inHandItem && actionCraftable.HasInteraction(inHandItemScript.itemType) && !animator.GetBool("craftRope"))
+                {
+                    animator.SetBool("craftRope", true);
+                }
+            }
+
         }
-        else if (Input.GetKeyDown(KeyCode.Escape)) {
-            isSelected = false;
-            animator.SetBool("isSelected", isSelected);
-            Vector3 camPos = cameraRig.transform.position;
-            Vector3 newPos = new Vector3 (camPos.x, camPos.y + 10, camPos.z - 10);
-            cameraRig.GetComponent<CameraController>().newPosition = newPos;
-        }
+
 
         if (!agent.pathPending && (agent.remainingDistance <= agent.stoppingDistance)) {
             animator.SetBool("isWalking", false);
@@ -285,3 +309,52 @@ public class PlayerController : MonoBehaviour
         }
     }
 }
+
+
+
+// Middle button clicks
+// Close open crate
+// Open closed crate
+// Put itens in open crate
+// Throw closed box
+/*else if (Input.GetMouseButtonDown(2)) {
+    if (isSelected) {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit)) {
+            if (inHandItem) {
+                if (inHandItem.tag == "Boxes") {
+                    actionItem = inHandItem;
+                    actionItemScript = actionItem.GetComponent<ItemScript>();
+                    actionItemScript.player = this;
+                    Vector3 hitPoint = hit.point;
+                    throwIsland = hit.transform.parent.gameObject;
+                    actionItemScript.throwIsland = throwIsland;
+                    //actionItemScript.destiny = null;
+                    Vector3 mouseDir = hitPoint - this.transform.position;
+                    mouseDir = mouseDir.normalized;
+                    throwDirection = mouseDir;
+                    moveToPoint(hit.point);
+                    //this.gameObject.transform.LookAt(actionItem.transform);
+                    //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(actionItem.transform.position), 10 * Time.deltaTime);
+                    performAction(2);
+                } else {
+                    actionItem = hit.transform.gameObject;
+                    actionItemScript = actionItem.GetComponent<ItemScript>();
+                    actionItemScript.player = this;
+                    moveToPoint(hit.point);
+                    //this.gameObject.transform.LookAt(actionItem.transform, );
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(actionItem.transform.position), 10 * Time.deltaTime);
+                    performAction(2);
+                }   
+            } else {
+                actionItem = hit.transform.gameObject;
+                actionItemScript = actionItem.GetComponent<ItemScript>();
+                actionItemScript.player = this;
+                moveToPoint(hit.point);
+                //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(actionItem.transform.position), 10 * Time.deltaTime);
+                performAction(2);
+            }
+        }  
+    }
+}*/
