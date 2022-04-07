@@ -6,12 +6,17 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class PlayerController : MonoBehaviour
 {
+    public enum CrateAction { StoreItem, Close}
+
     // Control Variables
     public GameObject inHandItem;
     public GameObject actionItem;
     public Item inHandItemScript;
     public Item actionItemScript;
     public Craftable actionCraftable;
+    public Crate actionCrate;
+    public Crate inHandCrate;
+    public CrateAction crateAction;
     public GameObject throwIsland;
     public GameObject cameraRig;
     public Animator animator;
@@ -38,133 +43,17 @@ public class PlayerController : MonoBehaviour
         selectable = true;
     }
 
-    // Function that the animation (grabbing item) calls on its event
-  /*  public void callItem() {
-        actionItemScript.pickupItem = true;
-        animator.SetBool("pickupItem", false);
-    }*/
 
-    // Function that the animation (pickup box) calls on its event
- /*   public void callBox() {
-        animator.SetBool("carryingBox", true);
-        actionItemScript.pickupBox = true;
-        animator.SetBool("pickupBox", false);
-    }*/
+    float GetHorizontalDistance(Vector3 a, Vector3 b)
+    {
+        return Mathf.Abs((a - b).magnitude);
+    }
 
-    // Function that the animation (throwing) calls on its event
-    /*public void throwingBox() {
-        inHandItemScript.throwBox = true;
-        inHandItemScript.formerParent = inHandItem.transform.parent;
-        inHandItemScript.parent = throwIsland.transform;
-        animator.SetBool("throwBox", false);
-        animator.SetBool("carryingBox", false);
-    }*/
-
-    // Function that the animation (put item down) calls on its event
-   /* public void dropItem() {
-        if (actionItem) {
-            if (actionItem.tag == "OpenCrates") {
-                inHandItemScript.dropItemBox = true;
-            } else {
-                inHandItemScript.dropItem = true;
-                animator.SetBool("pickupItem", true);
-            }
-        } else {
-            inHandItemScript.dropItem = true;
-        }
-        animator.SetBool("dropItem", false);
-        animator.SetBool("carryingBox", false);
-    }*/
-
-    // Function that the animations (knife cut, wood cut, craft raft) calls on its events
-    /*public void craftItem() {
-        craftingLoop++;
-        if (craftingLoop>=3)
-        {
-            craftingLoop = 0;
-            actionItemScript.craftItem = true;
-            animator.SetBool("craftRope", false);
-            animator.SetBool("craftRaft", false);
-            animator.SetBool("craftWood", false);
-        }
-    }*/
-
-    // Function that the animation (BoxAction) calls on its events
-   /* public void boxAction() {
-        if (actionItem.tag == "OpenCrates") {
-            actionItemScript.closeCrate = true;
-            animator.SetBool("boxAction", false);
-        } 
-        else if (actionItem.tag == "Boxes") {
-            actionItemScript.openCrate = true;
-            animator.SetBool("boxAction", false);
-        }
-    }*/
-
-    // Private Class functions
-
-    // Function to make the character walk towards a direction
     void moveToPoint(Vector3 point) {
         animator.SetBool("isWalking", true);
         agent.SetDestination(point);
     }
 
-    // Function that the clicks call to perform an specific event
-    void performAction(int click) {
-        //transform.LookAt(actionItem.transform);
-        // Check right clicks
-        if (click == 1) {
-            if (inHandItem) {
-                if (actionItem.tag == "Palms" && inHandItem.tag == "Knives") {
-                    animator.SetBool("craftRope", true);
-                } else if (actionItem.tag == "Trees" && inHandItem.tag == "Axes") {
-                    animator.SetBool("craftWood", true);
-                } else if (actionItem.tag == "UnfinishedRaft" && inHandItem.tag == "Hammers") {
-                    animator.SetBool("craftRaft", true);
-                } else {
-                    animator.SetBool("dropItem", true);
-                }
-            } else if (actionItem.tag == "Boxes") {
-                animator.SetBool("pickupBox", true);
-            } else if (actionItem.tag == "Axes" || actionItem.tag == "Hammers" || actionItem.tag == "Knives" || actionItem.tag == "Ropes") {
-                /*animator.SetTrigger("pickupItem");*/
-            }
-        }
-        // Check middle button clicks
-        /*else if (click == 2) {*/
-        // Open crate interactions
-        /*if (actionItem.tag == "OpenCrates") {
-            // Put item inside open crate
-            if (inHandItem) {
-                animator.SetBool("dropItem", true);
-            }
-            // Close the open crate
-            else {
-                if (actionItemScript.items[0]) {
-                    animator.SetBool("boxAction", true);
-                }
-                else {
-                    actionItem = null;
-                    actionItemScript = null;
-                }
-            }
-        }*/
-        // Closed Crate interactions
-        /*else if (actionItem.tag == "Boxes")
-        {
-            // Throw the closed crate
-            if (inHandItem == actionItem)
-            {
-                animator.SetBool("throwBox", true);
-            }
-            // Open the closed crate
-            else
-            {
-                animator.SetBool("boxAction", true);
-            }
-        }*/
-    }
-    
     void GetItem()
     {
         actionItemScript.PickupItem(hand);
@@ -173,7 +62,7 @@ public class PlayerController : MonoBehaviour
         actionItem = null;
         actionItemScript = null;
         animator.SetBool("pickupItem", false);
-        agent.ResetPath();
+        
     }
 
 
@@ -191,6 +80,23 @@ public class PlayerController : MonoBehaviour
         actionCraftable = null;
         animator.SetBool("craftRope", false);
 
+    }
+
+    void BoxAction()
+    {
+        if ( crateAction == CrateAction.StoreItem && actionCrate.isOpen)
+        {
+            actionCrate.StoreItem(inHandItemScript.itemType);
+            Destroy(inHandItem);
+            inHandItem = null;
+            inHandItemScript = null;
+        }
+        else if (crateAction == CrateAction.Close)
+        {
+            actionCrate.OpenClose();
+            actionCrate = null;
+        }
+        animator.SetBool("boxAction", false);
     }
 
 
@@ -244,6 +150,7 @@ public class PlayerController : MonoBehaviour
                     {
                         actionItem = null;
                         actionItemScript = null;
+                        actionCraftable = null;
                         moveToPoint(hit.point);
                     }
                     // Item interaction
@@ -251,6 +158,8 @@ public class PlayerController : MonoBehaviour
                     {
                         if( hit.transform.tag == "Item")
                         {
+                            actionCraftable = null;
+                            actionCrate = null;
                             actionItem = hit.transform.gameObject;
                             actionItemScript = actionItem.GetComponent<Item>();
 
@@ -258,9 +167,35 @@ public class PlayerController : MonoBehaviour
                         {
                             actionItem = null;
                             actionItemScript = null;
+                            actionCrate = null;
                             actionCraftable = hit.transform.gameObject.GetComponent<Craftable>();
+                        }else if (hit.transform.tag == "Crate")
+                        {
+                            actionItem = null;
+                            actionItemScript = null;
+                            actionCraftable = null;
+                            actionCrate = hit.transform.gameObject.GetComponent<Crate>();
+                            crateAction = CrateAction.StoreItem;
                         }
 
+                        moveToPoint(hit.point);
+                    }
+                }
+            }
+            // Middle mouse button
+            else if (Input.GetMouseButtonDown(2))
+            {
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit))
+                {
+                    if( hit.transform.tag == "Crate")
+                    {
+                        actionItem = null;
+                        actionItemScript = null;
+                        actionCraftable = null;
+                        actionCrate = hit.transform.gameObject.GetComponent<Crate>();
+                        crateAction = CrateAction.Close;
                         moveToPoint(hit.point);
                     }
                 }
@@ -285,17 +220,30 @@ public class PlayerController : MonoBehaviour
 
             if (actionItem)
             {
-                if (!inHandItem)
+                if (!inHandItem && !inHandCrate)
                 {
-                    if (!animator.GetBool("pickupItem") && (transform.position - actionItem.transform.position).magnitude <= 1f)
+                    if (!animator.GetBool("pickupItem") && GetHorizontalDistance(transform.position, actionItem.transform.position) <= 1f)
+                    {
+                        agent.ResetPath();
                         animator.SetBool("pickupItem", true);
+                    }
                 }
             }else if (actionCraftable)
             {
-                if(inHandItem && actionCraftable.HasInteraction(inHandItemScript.itemType) && !animator.GetBool("craftRope"))
+                if(inHandItem && actionCraftable.HasInteraction(inHandItemScript.itemType) && !animator.GetBool("craftRope") && GetHorizontalDistance(transform.position, actionCraftable.transform.position) <= 1f)
                 {
+                    agent.ResetPath();
                     animator.SetBool("craftRope", true);
                 }
+            }
+            else if (actionCrate)
+            {
+                if (( (inHandItem && crateAction == CrateAction.StoreItem) || (crateAction == CrateAction.Close)) && !animator.GetBool("boxAction") && GetHorizontalDistance(transform.position, actionCrate.transform.position) <= 1f)
+                {
+                    agent.ResetPath();
+                    animator.SetBool("boxAction", true);
+                }
+                
             }
 
         }

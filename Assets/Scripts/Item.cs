@@ -36,13 +36,10 @@ public class Item : MonoBehaviour
         itemsPositions.Add(Type.Hammer, new Vector3(0.12f, -0.04f, -0.1f));
         itemsRotations.Add(Type.Hammer, new Vector3(90, 180, -120));
 
+        itemsPositions.Add(Type.Rope, new Vector3(0.09f, -0.3f, -0.15f));
+        itemsRotations.Add(Type.Rope, new Vector3(-90, -180, 0));
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void PickupItem(Transform new_parent)
     {

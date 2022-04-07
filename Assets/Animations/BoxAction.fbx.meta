@@ -60,7 +60,7 @@ ModelImporter:
       curves: []
       events:
       - time: 0.87588245
-        functionName: boxAction
+        functionName: BoxAction
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

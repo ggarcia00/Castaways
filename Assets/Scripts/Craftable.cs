@@ -21,7 +21,7 @@ public class Craftable : MonoBehaviour
     public void Craft(Item.Type itemType)
     {
         Debug.Log("Craftado");
-        Instantiate(craftables[itemType], transform.position + new Vector3(1,0,1), Quaternion.identity);
+        Instantiate(craftables[itemType], transform.position + new Vector3(1,1,1), Quaternion.identity);
     }
 
     public bool HasInteraction(Item.Type type)
