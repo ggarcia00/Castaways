@@ -1,29 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
-    public enum Items {
-        Knives, Hammers, Ropes
-    }
+    [Header("Needed items for level completion")]
+    [Range(0, 5)]
+    public uint Knives;
+    [Range(0, 5)]
+    public uint Hammers;
+    [Range(0, 5)]
+    public uint Ropes;
 
 
-    void Start()
+
+    // Singleton
+    [HideInInspector]
+    public static LevelManager instance { get; private set;}
+
+
+    void Awake()
     {
-        //Items needed to win the level / get from outside
-        List<Items> neededItems = new List<Items>();
-        neededItems.Add(Items.Ropes);
-        neededItems.Add(Items.Hammers);
-        foreach( Items item in neededItems)
+        if( instance == null)
         {
-
+            instance = this;
+        }else
+        {
+            Destroy(this);
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
-        
+        UIController.instance.SetRequiredItems(Knives, Hammers, Ropes);
     }
+
 }

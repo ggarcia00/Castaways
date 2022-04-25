@@ -25,6 +25,10 @@ public class Crate :  MonoBehaviour
 
     private bool isThrowing;
 
+    public GameObject hammerPrefab;
+    public GameObject knifePrefab;
+    public GameObject ropePrefab;
+
     void Start()
     {
         heldItems = new List<Item.Type>();
@@ -41,6 +45,26 @@ public class Crate :  MonoBehaviour
     public void StoreItem(Item.Type item)
     {
         heldItems.Add(item);
+    }
+
+    public void retrieveItems()
+    {
+        foreach(Item.Type item in heldItems){
+            switch (item)
+            {
+                case Item.Type.Knife:
+                    Instantiate(knifePrefab, transform.position + new Vector3(1, 1, 0), Quaternion.identity);
+                    break;
+                case Item.Type.Hammer:
+                    Instantiate(hammerPrefab, transform.position + new Vector3(0, 1, -1), Quaternion.identity);
+                    break;
+                case Item.Type.Rope:
+                    Instantiate(ropePrefab, transform.position + new Vector3(-1, 1, 0), Quaternion.identity);
+                    break;
+            }
+        }
+
+        heldItems.Clear();
     }
     
     public void _Debug()
@@ -61,9 +85,11 @@ public class Crate :  MonoBehaviour
         {
             meshFilter.mesh = openCrateMesh;
             meshRenderer.materials = new Material[1] { meshRenderer.material };
+            retrieveItems();
 
         }
         isOpen = !isOpen;
+        
     }
 
     public void PickUp(Transform new_parent)

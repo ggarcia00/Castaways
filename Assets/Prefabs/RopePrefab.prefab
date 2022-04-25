@@ -7,50 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1454821743525644961, guid: 4b80a95460f001f44a245450c74b2be6,
-        type: 3}
-      propertyPath: m_NavMeshLayer
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1454821743525644961, guid: 4b80a95460f001f44a245450c74b2be6,
-        type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1598776626684349329, guid: 4b80a95460f001f44a245450c74b2be6,
-        type: 3}
-      propertyPath: defaultMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: 7925eaec763f69e41ac47f797e85baa1, type: 2}
-    - target: {fileID: 1598776626684349329, guid: 4b80a95460f001f44a245450c74b2be6,
-        type: 3}
-      propertyPath: highlightMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: 1cc08a3f4c4ff4ebb980be82aa6556b9, type: 2}
-    - target: {fileID: 4214053186652550326, guid: 4b80a95460f001f44a245450c74b2be6,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5285746147580513077, guid: 4b80a95460f001f44a245450c74b2be6,
         type: 3}
       propertyPath: m_Name
       value: RopePrefab
-      objectReference: {fileID: 0}
-    - target: {fileID: 5285746147580513077, guid: 4b80a95460f001f44a245450c74b2be6,
-        type: 3}
-      propertyPath: m_TagString
-      value: Item
-      objectReference: {fileID: 0}
-    - target: {fileID: 5285746147580513077, guid: 4b80a95460f001f44a245450c74b2be6,
-        type: 3}
-      propertyPath: m_NavMeshLayer
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5285746147580513077, guid: 4b80a95460f001f44a245450c74b2be6,
-        type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9151850752513931558, guid: 4b80a95460f001f44a245450c74b2be6,
         type: 3}
@@ -107,11 +67,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 1598776626684349329, guid: 4b80a95460f001f44a245450c74b2be6, type: 3}
-    - {fileID: 5617582265028133014, guid: 4b80a95460f001f44a245450c74b2be6, type: 3}
-    - {fileID: 4214053186652550326, guid: 4b80a95460f001f44a245450c74b2be6, type: 3}
-    - {fileID: 5197472264172927325, guid: 4b80a95460f001f44a245450c74b2be6, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b80a95460f001f44a245450c74b2be6, type: 3}
 --- !u!1 &2848831923222526493 stripped
 GameObject:
@@ -119,23 +75,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 7985915233096282408}
   m_PrefabAsset: {fileID: 0}
---- !u!208 &5257233476159526444
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2848831923222526493}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 27.128002, y: 10.002001, z: 34.826}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 0
-  m_Center: {x: 5.262, y: 11.437, z: 13.729001}
-  m_TimeToStationary: 0.5
---- !u!114 &5643042828283506578
+--- !u!114 &7610879327013106706
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,7 +84,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2848831923222526493}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a6f599d79c70544ba057d62375be809, type: 3}
+  m_Script: {fileID: 11500000, guid: c92ba14bf517e604f8539a345d55be54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemType: 2
+  mat: {fileID: 1975128638470303596, guid: 11166e7fb58ba684796713538eab657f, type: 3}

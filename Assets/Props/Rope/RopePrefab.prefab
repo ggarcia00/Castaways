@@ -15,7 +15,7 @@ GameObject:
   m_Name: pTorus5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
+  m_NavMeshLayer: 1
   m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8610415990315898984
@@ -93,13 +93,14 @@ GameObject:
   - component: {fileID: 4214053186652550324}
   - component: {fileID: 4214053186652550327}
   - component: {fileID: 4214053186652550329}
-  - component: {fileID: 5197472264172927325}
   - component: {fileID: 7191791509275103665}
+  - component: {fileID: 5257233476159526444}
+  - component: {fileID: 5643042828283506578}
   m_Layer: 0
   m_Name: RopePrefab
-  m_TagString: Ropes
+  m_TagString: Item
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
+  m_NavMeshLayer: 1
   m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &9151850752513931558
@@ -109,7 +110,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5285746147580513077}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 94.4, y: 3.27, z: -16.82}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
@@ -182,19 +183,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5197472264172927325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5285746147580513077}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a6f599d79c70544ba057d62375be809, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemType: 2
 --- !u!65 &7191791509275103665
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -208,3 +196,32 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 50, y: 20, z: 60}
   m_Center: {x: 5, y: 12, z: 8}
+--- !u!208 &5257233476159526444
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5285746147580513077}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 27.128002, y: 10.002001, z: 34.826}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 0
+  m_Center: {x: 5.262, y: 11.437, z: 13.729001}
+  m_TimeToStationary: 0.5
+--- !u!114 &5643042828283506578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5285746147580513077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6f599d79c70544ba057d62375be809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemType: 2
