@@ -9,7 +9,7 @@ public class Item : MonoBehaviour
         Knife, Hammer, Rope
     };
 
-    // Dicion·rio que guarda a posiÁ„o que cada item deve ficar na m„o do personagem
+    // Dicion√°rio que guarda a posi√ß√£o que cada item deve ficar na m√£o do personagem
     Dictionary<Type, Vector3> itemsPositions = new Dictionary<Type, Vector3>();
     Dictionary<Type, Vector3> itemsRotations = new Dictionary<Type, Vector3>();
 

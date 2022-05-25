@@ -17,24 +17,24 @@ public class PlayerController : MonoBehaviour
     public Crate actionCrate;
     public Crate inHandCrateScript;
     public CrateAction crateAction;
-    public GameObject throwIsland;
+    public GameObject actionDock;
     public GameObject cameraRig;
     public Animator animator;
     public Vector3 throwTarget;
     public bool isSelected = false;
-    public int craftingLoop = 0;
-    public float throwForce = 10f;
+    
+    
 
-    public string debug;
-    public float remaining = 0;
-    public float stopping = 0;
-    public bool startedWalking = false;
 
     // Ambient Variables
     NavMeshAgent agent;
     bool selectable = false;
 
     public Transform hand;
+    [Header("Sounds")]
+    [SerializeField] private AudioSource asRopeCutting;
+    [SerializeField] private AudioSource asCloseBox;
+    [SerializeField] private AudioSource asOpenBox;
     
     // Public Class functions
 
@@ -87,6 +87,7 @@ public class PlayerController : MonoBehaviour
         actionCraftable.Craft(inHandItemScript.itemType);
         actionCraftable = null;
         animator.SetBool("craftRope", false);
+        asRopeCutting.Play();
 
     }
 
@@ -102,7 +103,13 @@ public class PlayerController : MonoBehaviour
         else if (crateAction == CrateAction.Close)
         {
             actionCrate.OpenClose();
+            if (actionCrate.isOpen == false)
+                asCloseBox.Play();
+            else
+                asOpenBox.Play();
             actionCrate = null;
+
+            crateAction = CrateAction.StoreItem;
         }
         animator.SetBool("boxAction", false);
     }
@@ -134,6 +141,7 @@ public class PlayerController : MonoBehaviour
     void Start() {
         agent = GetComponent<NavMeshAgent>();
         animator = this.gameObject.GetComponent<Animator>();
+        
     }
 
     // Update is called once per frame
@@ -176,7 +184,7 @@ public class PlayerController : MonoBehaviour
                 if (Physics.Raycast(ray, out hit))
                 {
                     // Character movement
-                    if (hit.transform.tag == "Floor" || hit.transform.tag == "Untagged" || hit.transform.tag == "Players" || hit.transform.tag == "OpenCrates")
+                    if (hit.transform.CompareTag("Floor") || hit.transform.CompareTag("Untagged") || hit.transform.CompareTag("Players") || hit.transform.CompareTag("OpenCrates"))
                     {
                         actionItem = null;
                         actionItemScript = null;
@@ -187,26 +195,33 @@ public class PlayerController : MonoBehaviour
                     // Item interaction
                     else
                     {
-                        if( hit.transform.tag == "Item")
+                        if( hit.transform.CompareTag("Item"))
                         {
                             actionCraftable = null;
                             actionCrate = null;
                             actionItem = hit.transform.gameObject;
                             actionItemScript = actionItem.GetComponent<Item>();
 
-                        }else if (hit.transform.tag == "Craftable")
+                        }else if (hit.transform.CompareTag("Craftable"))
                         {
                             actionItem = null;
                             actionItemScript = null;
                             actionCrate = null;
                             actionCraftable = hit.transform.gameObject.GetComponent<Craftable>();
-                        }else if (hit.transform.tag == "Crate")
+                        }else if (hit.transform.CompareTag("Crate"))
                         {
                             actionItem = null;
                             actionItemScript = null;
                             actionCraftable = null;
                             actionCrate = hit.transform.gameObject.GetComponent<Crate>();
                             crateAction = CrateAction.StoreItem;
+                        }else if (hit.transform.CompareTag("Dock"))
+                        {
+                            actionItem = null;
+                            actionItemScript = null;
+                            actionCraftable = null;
+                            actionCrate = null;
+                            actionDock = hit.transform.gameObject;
                         }
 
                         moveToPoint(hit.point);
@@ -232,7 +247,7 @@ public class PlayerController : MonoBehaviour
                     else if (inHandItem && inHandCrateScript && !animator.GetBool("throwBox"))
                     {
                         Island island;
-                        if(island = hit.transform.gameObject.GetComponent<Island>())
+                        if((island = hit.transform.gameObject.GetComponent<Island>()))
                         {
                             animator.SetBool("throwBox", true);
                             throwTarget = island.landingCratePosition.position;
@@ -279,17 +294,29 @@ public class PlayerController : MonoBehaviour
             }
             else if (actionCrate)
             {
-                if (((inHandItem && crateAction == CrateAction.StoreItem && actionCrate.isOpen)  || (crateAction == CrateAction.Close)  && !animator.GetBool("boxAction")) && GetHorizontalDistance(transform.position, actionCrate.transform.position) <= 1f)
+                if (((inHandItem && crateAction == CrateAction.StoreItem && actionCrate.isOpen) ||
+                     (crateAction == CrateAction.Close) && !animator.GetBool("boxAction")) &&
+                    GetHorizontalDistance(transform.position, actionCrate.transform.position) <= 1f)
                 {
                     agent.ResetPath();
                     animator.SetBool("boxAction", true);
                 }
-                else if (!inHandItem && !actionCrate.isOpen && !animator.GetBool("pickupBox") && GetHorizontalDistance(transform.position, actionCrate.transform.position) <= 5f )
+                else if (!inHandItem && !actionCrate.isOpen && !animator.GetBool("pickupBox") && crateAction != CrateAction.Close &&
+                         GetHorizontalDistance(transform.position, actionCrate.transform.position) <= 5f)
                 {
                     agent.ResetPath();
                     animator.SetBool("pickupBox", true);
                 }
-                
+
+            }
+            else if (actionDock)
+            {
+                if (GetHorizontalDistance(transform.position, actionDock.transform.position) <= 5f)
+                {
+                    if(LevelManager.instance.CheckItems())
+                        Debug.Log("Venceu");
+                    actionDock = null;
+                }
             }
 
         }

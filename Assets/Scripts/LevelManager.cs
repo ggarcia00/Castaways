@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
@@ -14,6 +10,12 @@ public class LevelManager : MonoBehaviour
     [Range(0, 5)]
     public uint Ropes;
 
+    [Header("Position of Raft Spawn")]
+    public Transform raftCraftLocation;
+
+    public GameObject raftPrefab;
+
+    [Header("Crate of the level")] public Crate crate;
 
 
     // Singleton
@@ -35,6 +37,14 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         UIController.instance.SetRequiredItems(Knives, Hammers, Ropes);
+    }
+
+    public bool CheckItems()
+    {
+        int knife, hammer, rope;
+        crate.GetItems(out knife, out hammer, out rope);
+
+        return Knives == knife && Hammers == hammer && Ropes == rope;
     }
 
 }

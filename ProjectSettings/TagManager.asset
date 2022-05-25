@@ -17,6 +17,7 @@ TagManager:
   - Craftable
   - Ropes
   - Crate
+  - Dock
   layers:
   - Default
   - TransparentFX

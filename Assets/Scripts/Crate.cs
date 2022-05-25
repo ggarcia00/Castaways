@@ -149,4 +149,30 @@ public class Crate :  MonoBehaviour
         nMeshObstacle.enabled = true;
         yield break;
     }
+
+    public void GetItems(out int knife, out int hammer, out int rope)
+    {
+        knife = hammer = rope = 0;
+        
+        foreach (Item.Type item in heldItems)
+        {
+            switch (item)
+            {
+                case Item.Type.Knife:
+                    knife++;
+                    break;
+                
+                case Item.Type.Hammer:
+                    hammer++;
+                    break;
+                
+                case Item.Type.Rope:
+                    rope++;
+                    break;
+                        
+                default:
+                    break;
+            }
+        }
+    }
 }
